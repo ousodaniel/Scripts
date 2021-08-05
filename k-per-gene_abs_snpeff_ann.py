@@ -17,11 +17,13 @@ def replace(string, substitutions):
 header = 'sample_name\tnum_vars\tORF1ab\tORF1a\tS\tORF3a\tORF3b\tE\tM\tORF6\tORF7a\tORF7b\tORF8\tN\tORF9a\tORF9b\tORF10\n'
 fout = open("k-per-gene_variant_anns.tsv",'w')
 fout.write(header)
+suffix = '.snpeff.vcf'
 for file in os.listdir():
 #file = "COVC14272_S10_L001_variants.ann.vcf"
-    if file.endswith('.snpEff.vcf'):
-        cov_name = file.split("_")[0:2]
-        sam_name = "_".join(cov_name)
+    if file.endswith(suffix):
+        # print(file)
+        cov_name = file.split(".")[0]
+        sam_name = cov_name#"_".join(cov_name)
         with open(file) as f:
             genes = {'orf1ab':[], 'ORF1a':[], 'S':[], 'ORF3a':[], 'ORF3b':[]
             , 'E':[], 'M':[], 'ORF6':[], 'ORF7a':[], 'ORF7b':[], 'ORF8':[]
@@ -51,7 +53,11 @@ for file in os.listdir():
                     )
                 ann_str = ann_str + '\t' + _
             out_line = sam_name + '\t' + str(var_count) + ann_str + '\n'
+            # print(out_line)
             if out_line != sam_name + '\t' + str(var_count) + 15*'\t' + '\n':
                 fout.write(out_line)
-            else: print(f"Sample {sam_name} didn't have any variants callled")
+            else: 
+                print(f"Sample {sam_name} didn't have any variants called")
+                fout.write(out_line)
+    else: print(f"File '{file}' is not a '{suffix}' file type: It was skipped...")
 fout.close()
