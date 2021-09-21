@@ -40,9 +40,14 @@ for file in os.listdir():
                 if not re.match("#",line) and line != '':
                     line = re.split("\t", line)
                     ann = line[7]
-                    coverage = int(line[9].split(':')[1]) + int(line[9].split(':')[4])
-                    alt_freq = round(float(line[9].split(':')[-1]) * 100, 1)
-                    alt_qual = line[9].split(':')[6]
+                    if line[8].split(':') == ['GT', 'GQ', 'PS', 'UG', 'UQ']:
+                        coverage = line[7].split(';')[0].split('=')[1]
+                        alt_freq = round(int(line[7].split(';')[1].split(',')[1]) / int(coverage))
+                        alt_qual = round(float(line[7].split(';')[6].split('=')[1]))
+                    else:
+                        coverage = int(line[9].split(':')[1]) + int(line[9].split(':')[4])
+                        alt_freq = round(float(line[9].split(':')[-1]) * 100)
+                        alt_qual = line[9].split(':')[6]
                     gene = ann.split("|")[3]
                     pos = "g." + (str(line[1]))
                     HGVS_c = ann.split("|")[9]
