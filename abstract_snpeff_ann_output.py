@@ -14,16 +14,18 @@ def replace(string, substitutions):
     regex = re.compile('|'.join(map(re.escape, substrings)))
     return regex.sub(lambda match: substitutions[match.group(0)], string)
 
-header = 'sample_name\tannotation\n'
-fout = open("All_variant_anns.tsv",'w')
+header = 'sample_name\tnum_vars\tORF1ab\tORF1a\tS\tORF3a\tORF3b\tE\tM\tORF6\tORF7a\tORF7b\tORF8\tN\tORF9a\tORF9b\tORF10\n'
+fout = open("k-per-gene_variant_anns.tsv",'w')
 fout.write(header)
+suffix = '.snpeff.vcf'
 for file in os.listdir():
 #file = "COVC14272_S10_L001_variants.ann.vcf"
-    if file.endswith('.ann.vcf'):
-        cov_name = file.split("_")[0:2]
-        sam_name = "_".join(cov_name)
+    if file.endswith(suffix):
+        # print(file)
+        cov_name = file.split(".")[0]
+        sam_name = cov_name#"_".join(cov_name)
         with open(file) as f:
-            genes = {'ORF1ab':[], 'ORF1a':[], 'S':[], 'ORF3a':[], 'ORF3b':[]
+            genes = {'orf1ab':[], 'ORF1a':[], 'S':[], 'ORF3a':[], 'ORF3b':[]
             , 'E':[], 'M':[], 'ORF6':[], 'ORF7a':[], 'ORF7b':[], 'ORF8':[]
             , 'N':[], 'ORF9a':[], 'ORF9b':[], 'ORF10':[]}
             for line in f:
@@ -34,20 +36,28 @@ for file in os.listdir():
                     pos = "g." + (str(line[1]))
                     HGVS_c = ann.split("|")[9]
                     HGVS_p = replace(ann.split("|")[10], aa_code)
-                    cp = tuple([pos, HGVS_c, HGVS_p])
-                    genes[gene].append(cp)
+                    prot_mut = [HGVS_p][0].lstrip('p.')
+                    genes[gene].append(prot_mut)
             ann_str = ""
+            var_count = 0
             for gene in genes:
-                if len(genes[gene]) > 0:
-                    x = ('{}: {}'.format(gene, str(genes[gene])
-                                 .replace("[", "")
-                                 .replace("]", "")
-                                 .replace("'", ""))
-                        )
-                    ann_str = ann_str + x + '\n\t'
-                else: pass
-            out_line = sam_name + '\t' + ann_str + '\n'
-            if out_line == sam_name + '\t\n':
-                pass
-            else: fout.write(out_line)
+                for var in genes[gene]:
+                    if len(var) != 0:
+                        var_count += 1
+                    else: pass
+                _ = ('{}'.format(str(genes[gene])
+                             .replace("[", "")
+                             .replace("]", "")
+                             .replace("'", "")
+                             .lstrip(', '))
+                    )
+                ann_str = ann_str + '\t' + _
+            out_line = sam_name + '\t' + str(var_count) + ann_str + '\n'
+            # print(out_line)
+            if out_line != sam_name + '\t' + str(var_count) + 15*'\t' + '\n':
+                fout.write(out_line)
+            else: 
+                print(f"Sample {sam_name} didn't have any variants called")
+                fout.write(out_line)
+    else: print(f"File '{file}' is not a '{suffix}' file type: It was skipped...")
 fout.close()
