@@ -15,15 +15,16 @@ def replace(string, substitutions):
     return regex.sub(lambda match: substitutions[match.group(0)], string)
 
 def get_var_attr(x):
-    prot_mut = '';alt_freq = '';alt_qual = '';g_coverage = ''
+    prot_mut = '';alt_freq = '';alt_qual = '';g_coverage = ''; g_pos = ''
     prot_mut += x[0]
     alt_freq += str(x[1])
     alt_qual += str(x[2])
     g_coverage += str(x[3])
-    return prot_mut, alt_freq, alt_qual, g_coverage
+    g_pos += str(x[4])
+    return prot_mut, alt_freq, alt_qual, g_coverage, g_pos
 
 header = 'sample_name\tnum_vars\tORF1ab\tORF1a\tS\tORF3a\tORF3b\tE\tM\tORF6\tORF7a\tORF7b\tORF8\tN\tORF9a\tORF9b\tORF10\n'
-fout = open("k-per-gene_variant_anns.tsv",'w')
+fout = open("per-gene_variants_QC-attr.tsv",'w')
 fout.write(header)
 suffix = '.snpeff.vcf'
 for file in os.listdir():
@@ -54,35 +55,39 @@ for file in os.listdir():
                     HGVS_p = replace(ann.split("|")[10], aa_code)
                     prot_mut = [HGVS_p][0].lstrip('p.')
                     if prot_mut == '': prot_mut = "NC"
-                    vcf_tup = (prot_mut, alt_freq, alt_qual, coverage)
+                    vcf_tup = (prot_mut, alt_freq, alt_qual, coverage, pos)
                     genes[gene].append(vcf_tup)
-            variants = ''; altfreq = ''; altqual = ''; gencov = ''
+            variants = ''; altfreq = ''; altqual = ''; gencov = ''; genpos = ''
             var_count = 0
             for gene in genes:
                 var_attrs = map(get_var_attr, genes[gene])
-                vart = ''; altf = ''; altq = ''; genc = ''
+                vart = ''; altf = ''; altq = ''; genc = ''; genp = ''
                 for var_attr in var_attrs:
                     var_count += 1
-                    pm,af,aq,gc = var_attr
+                    pm,af,aq,gc,gp = var_attr
                     vart += f', {pm}'
                     altf += f', {af}'
                     altq += f', {aq}'
                     genc += f', {gc}'
+                    genp += f', {gp}'
                 variants = variants + '\t' + vart.lstrip(', ')
                 altfreq = altfreq + '\t' + altf.lstrip(', ')
                 altqual = altqual + '\t' + altq.lstrip(', ')
                 gencov = gencov + '\t' + genc.lstrip(', ')
+                genpos = genpos + '\t' + genp.lstrip(', ')
 
             out_line1 = sam_name + '\t' + str(var_count) + variants + '\n'
             out_line2 = f'af_{sam_name}' + '\t' + str(var_count) + altfreq + '\n'
             out_line3 = f'aq_{sam_name}' + '\t' + str(var_count) + altqual + '\n'
             out_line4 = f'gc_{sam_name}' + '\t' + str(var_count) + gencov + '\n'
+            out_line5 = f'gp_{sam_name}' + '\t' + str(var_count) + genpos + '\n'
             # print(out_line)
             if out_line1 != sam_name + '\t' + str(var_count) + 15*'\t' + '\n':
                 fout.write(out_line1)
                 fout.write(out_line2)
                 fout.write(out_line3)
                 fout.write(out_line4)
+                fout.write(out_line5)
             else: 
                 print(f"Sample {sam_name} didn't have any variants called")
                 fout.write(out_line1)
