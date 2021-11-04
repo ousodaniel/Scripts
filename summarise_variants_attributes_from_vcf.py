@@ -43,7 +43,7 @@ for file in os.listdir():
                     ann = line[7]
                     if line[8].split(':') == ['GT', 'GQ', 'PS', 'UG', 'UQ']:
                         coverage = line[7].split(';')[0].split('=')[1]
-                        alt_freq = round(int(line[7].split(';')[1].split(',')[1]) / int(coverage))
+                        alt_freq = round((int(line[7].split(';')[1].split(',')[1]) / int(coverage))*100)
                         alt_qual = round(float(line[7].split(';')[6].split('=')[1]))
                     else:
                         coverage = int(line[9].split(':')[1]) + int(line[9].split(':')[4])
@@ -66,10 +66,10 @@ for file in os.listdir():
                     var_count += 1
                     pm,af,aq,gc,gp = var_attr
                     vart += f', {pm}'
-                    altf += f', {af}'
-                    altq += f', {aq}'
-                    genc += f', {gc}'
-                    genp += f', {gp}'
+                    altf += f', {af}'#frequency
+                    altq += f', {aq}'#quality
+                    genc += f', {gc}'#coverage
+                    genp += f', {gp}'#position
                 variants = variants + '\t' + vart.lstrip(', ')
                 altfreq = altfreq + '\t' + altf.lstrip(', ')
                 altqual = altqual + '\t' + altq.lstrip(', ')
