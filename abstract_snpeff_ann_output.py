@@ -17,7 +17,7 @@ def replace(string, substitutions):
 header = 'sample_name\tnum_vars\tORF1ab\tORF1a\tS\tORF3a\tORF3b\tE\tM\tORF6\tORF7a\tORF7b\tORF8\tN\tORF9a\tORF9b\tORF10\n'
 fout = open("k-per-gene_variant_anns.tsv",'w')
 fout.write(header)
-suffix = '.snpeff.vcf'
+suffix = '.vcf'
 for file in os.listdir():
 #file = "COVC14272_S10_L001_variants.ann.vcf"
     if file.endswith(suffix):
@@ -27,7 +27,7 @@ for file in os.listdir():
         with open(file) as f:
             genes = {'orf1ab':[], 'ORF1a':[], 'S':[], 'ORF3a':[], 'ORF3b':[]
             , 'E':[], 'M':[], 'ORF6':[], 'ORF7a':[], 'ORF7b':[], 'ORF8':[]
-            , 'N':[], 'ORF9a':[], 'ORF9b':[], 'ORF10':[]}
+            , 'N':[], 'ORF9a':[], 'ORF9b':[], 'ORF10':[]}#, 'ORF6&ORF7a': []}
             for line in f:
                 if not re.match("#",line):
                     line = re.split("\t", line)
