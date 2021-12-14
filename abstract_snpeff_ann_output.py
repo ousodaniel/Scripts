@@ -1,4 +1,5 @@
 import re, os
+from shutil import copyfile
 
 aa_code = {
     "Ala": "A", "Cys": "C", "Asp": "D", "Glu": "E", "Phe": "F",
@@ -17,7 +18,7 @@ def replace(string, substitutions):
 header = 'sample_name\tnum_vars\tORF1ab\tORF1a\tS\tORF3a\tORF3b\tE\tM\tORF6\tORF7a\tORF7b\tORF8\tN\tORF9a\tORF9b\tORF10\n'
 fout = open("k-per-gene_variant_anns.tsv",'w')
 fout.write(header)
-suffix = '.vcf'
+suffix = '.snpeff.vcf'
 for file in os.listdir():
 #file = "COVC14272_S10_L001_variants.ann.vcf"
     if file.endswith(suffix):
@@ -37,6 +38,7 @@ for file in os.listdir():
                     HGVS_c = ann.split("|")[9]
                     HGVS_p = replace(ann.split("|")[10], aa_code)
                     prot_mut = [HGVS_p][0].lstrip('p.')
+                    if prot_mut == '': prot_mut = "NC"
                     genes[gene].append(prot_mut)
             ann_str = ""
             var_count = 0
@@ -61,3 +63,4 @@ for file in os.listdir():
                 fout.write(out_line)
     else: print(f"File '{file}' is not a '{suffix}' file type: It was skipped...")
 fout.close()
+copyfile("./k-per-gene_variant_anns.tsv", "../var")
