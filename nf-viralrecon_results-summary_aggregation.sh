@@ -57,5 +57,6 @@ cat ./*COV*.csv | grep ${grep_pat} >> png-nfvr.csv
 
 if [[ $? == 0 ]] 
 then
-echo Finished result aggregation! && cd ../..
+cd ..
+echo "Finished result aggregation, see $PWD for output; the 'nxt' dir may take a bit to populate..." && cd ..
 fi
