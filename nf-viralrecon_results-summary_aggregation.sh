@@ -5,19 +5,19 @@
 # The script is dependent on another - "nextclade_sars.sbatch" that does the
 # nexclade nalysis using the consensus
 
-if [[ $1 == ont ]]
+if [[ $1 && $2  == ont ]]
 then
 mqc_pat=medaka
 grep_pat=medaka
 summ_pat=medaka
 
-elif [[ $1 == illumina ]]
+elif [[ $1 && $2  == illumina ]]
 then
 grep_pat=Consensus
 summ_pat=variants/[bi][ov]* # targets the "bowtie" and "ivar" folders
 mqc_pat=''
 else
-echo ERROR: either ont or illumina must be given as an arg; exit 1
+echo -e "ERROR: node-name and either \"ont\" or \"illumina\" must be given as args, respectively\nUSAGE: nf-viralrecon_results-summary_aggr$
 fi
 
 
@@ -26,7 +26,6 @@ rm -r output_${PWD##*/} 2> /dev/null
 mkdir  output_${PWD##*/}
 agg_dir=output_${PWD##*/} && cd ${agg_dir}
 
-#if [[ -d 
 
 mkdir -p nxt png snpEff plt dpt/amplicon dpt/genome qcs var
 
