@@ -35,6 +35,7 @@ cp ../results/${summ_pat}/mosdepth/amplicon/*tsv dpt/amplicon
 cp ../results/${summ_pat}/mosdepth/genome/*tsv dpt/genome
 cp ../results/${summ_pat}/quast/transposed_report.tsv qcs
 cp ../results/${summ_pat}/pangolin/*.csv png
+gunzip ../results/${summ_pat}/snpeff/*vcf.gz 2> /dev/null
 cp ../results/${summ_pat}/snpeff/*vcf snpEff
 cp ../results/multiqc/${mqc_pat}/summary_variants_metrics_mqc.csv qcs
 cat ../results/${summ_pat}/*consensus* > png/${agg_dir#*_}.all.consensus.fasta
@@ -52,7 +53,7 @@ sbatch -w compute06 ~/sarsis_temlate/exe/
 cd ../png
 rm png.csv 2> /dev/null	
 head_sam=`ls -1 *csv | head -n1`
-head -n1 *${head_sam}* >> png-nfvr.csv
+head -n1 *${head_sam}* > png-nfvr.csv
 
 cat ./*COV*.csv | grep ${grep_pat} >> png-nfvr.csv
 #if [[ `grep -v ^taxon | wc -l png-nfvr.csv` eq `ls -1 *COV*.csv | wc -l` ]]; then rm *COV*.csv; fi
