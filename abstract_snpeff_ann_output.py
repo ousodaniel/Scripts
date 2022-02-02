@@ -23,7 +23,7 @@ for file in os.listdir():
 #file = "COVC14272_S10_L001_variants.ann.vcf"
     if file.endswith(suffix):
         # print(file)
-        cov_name = file.split(".")[0]
+        cov_name = file.split(".")[0].split("_")[0]
         sam_name = cov_name#"_".join(cov_name)
         with open(file) as f:
             genes = {'orf1ab':[], 'ORF1a':[], 'S':[], 'ORF3a':[], 'ORF3b':[]
@@ -63,4 +63,4 @@ for file in os.listdir():
                 fout.write(out_line)
     else: print(f"File '{file}' is not a '{suffix}' file type: It was skipped...")
 fout.close()
-copyfile("./k-per-gene_variant_anns.tsv", "../var")
+copyfile("./k-per-gene_variant_anns.tsv", "../var/k-per-gene_variant_anns.tsv")
