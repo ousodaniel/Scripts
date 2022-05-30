@@ -39,7 +39,12 @@ for file in os.listdir():
                     HGVS_p = replace(ann.split("|")[10], aa_code)
                     prot_mut = [HGVS_p][0].lstrip('p.')
                     if prot_mut == '': prot_mut = "NC"
-                    genes[gene].append(prot_mut)
+                    try:
+                        genes[gene].append(prot_mut)
+                    except:
+                        if KeyError:
+                            print(f'A unique gene feature ({gene}) was noted in sample {sam_name}')
+                    pass
             ann_str = ""
             var_count = 0
             for gene in genes:
@@ -56,7 +61,8 @@ for file in os.listdir():
                 ann_str = ann_str + '\t' + _
             out_line = sam_name + '\t' + str(var_count) + ann_str + '\n'
             # print(out_line)
-            if out_line != sam_name + '\t' + str(var_count) + 15*'\t' + '\n':
+            ncol = 15
+            if out_line != sam_name + '\t' + str(var_count) + ncol*'\t' + '\n':
                 fout.write(out_line)
             else: 
                 print(f"Sample {sam_name} didn't have any variants called")
