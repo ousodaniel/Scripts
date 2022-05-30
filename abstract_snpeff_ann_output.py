@@ -43,7 +43,7 @@ for file in os.listdir():
                         genes[gene].append(prot_mut)
                     except:
                         if KeyError:
-                            print(f'A unique gene feature ({gene}) was noted in sample {sam_name}')
+                            print(f'\nWARNING: A unique gene feature ({gene}) was noted in sample {sam_name}\n')
                     pass
             ann_str = ""
             var_count = 0
@@ -67,6 +67,7 @@ for file in os.listdir():
             else: 
                 print(f"Sample {sam_name} didn't have any variants called")
                 fout.write(out_line)
-    else: print(f"File '{file}' is not a '{suffix}' file type: It was skipped...")
+    elif "k-per-gene_variant_anns.tsv" not in file:
+        print(f"File '{file}' is not a '{suffix}' file type: It was skipped...")
 fout.close()
 copyfile("./k-per-gene_variant_anns.tsv", "../var/k-per-gene_variant_anns.tsv")
